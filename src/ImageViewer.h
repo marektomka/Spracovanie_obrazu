@@ -22,7 +22,7 @@ private:
 	QMessageBox msgBox;
 
 
-	int N = 2;
+	int N = 400;
 
 
 	//ImageViewer Events

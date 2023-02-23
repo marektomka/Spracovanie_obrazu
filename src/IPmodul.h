@@ -23,8 +23,8 @@ public:
 	IPClass(uchar* dat) { data = dat; };
 
 	// Filter functions // 
-	void mirroring(int N, int w, int h, uchar* origData);
-	void unmirroring(int N, int w, int h);
+	bool mirroring(int N, int w, int h, uchar* origData);
+	bool unmirroring(int N, int w, int h);
 
 	// Get functions //
 	uchar* getData() { return data; };
@@ -36,7 +36,6 @@ public:
 	~IPClass();
 
 	// Export functions // 
-	bool exportToPGM(std::string fileName, uint imgWidth, uint imgHeight, int maxValue, double* imgData, bool scaleData);
-	bool exportToPGM(std::string fileName, uint imgWidth, uint imgHeight, int maxValue, uchar* imgData);
-
+	bool exportPGM(int w, int h, double* imgData);
+	bool exportPGM(int w, int h, uchar* imgData);
 };

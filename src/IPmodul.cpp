@@ -4,14 +4,28 @@ IPClass::IPClass()
 {
 }
 
-void IPClass::mirroring(int N, int w, int h, uchar* origData)
+bool IPClass::mirroring(int N, int w, int h, uchar* origData)
 { 
-	tempWidth = w + (2 * N); 
+	// Variables //
+	tempWidth = w + (2 * N);
 	tempHeight = h + (2 * N);
 	int ZeroPix = N + (N * tempWidth);		// 0. pixel original
+
+	// Delete old data //
+	if (tempData != nullptr)
+	{
+		free(tempData); 
+		tempData = nullptr;
+	}
+
+	// Memory allocation // 
 	tempData = new double[tempWidth * tempHeight];
 
-	// stred
+	if (tempData == nullptr) 
+		return false;
+
+
+	// Copy original data // 
 	for (int i = 0; i < h; i++)
 	{
 		for (int j = 0; j < w; j++)
@@ -22,8 +36,7 @@ void IPClass::mirroring(int N, int w, int h, uchar* origData)
 		}
 	}
 
-	
-	// hore a dole
+	// Upper and lower mirror //
 	for (int i = 0; i < N; i++)
 	{
 		for (int j = 0; j < w; j++)
@@ -32,14 +45,14 @@ void IPClass::mirroring(int N, int w, int h, uchar* origData)
 			int tempIndex = N + j + (i * tempWidth);
 			tempData[tempIndex] = static_cast<double>(origData[index]);
 
-			index = j + (h - N + 1 + i) * (w - 1);
-			tempIndex = N + (tempHeight - 1) * tempWidth + j - (i * tempWidth);
+			index = j + ((h-1) - (N - 1) + i) * w;
+			tempIndex = N + j + (tempHeight - 1) * tempWidth - (i * tempWidth);
 			tempData[tempIndex] = static_cast<double>(origData[index]);
 		}
 	}
 
 	
-	// lavy a pravy kraj 
+	// Left and right mirror //
 	for (int i = 0; i < tempHeight; i++)
 	{
 		for (int j = 0; j < N; j++)
@@ -49,18 +62,27 @@ void IPClass::mirroring(int N, int w, int h, uchar* origData)
 			tempData[index1] = tempData[index2];
 
 			index1 = (tempWidth - 1) + (i * tempWidth) - j;
-			index2 = (i * tempWidth) - (2 * N) + j;
+			index2 = w + j + (i * tempWidth);
 			tempData[index1] = tempData[index2];
 		}
 	}
 
+	return true;
 }
 
-void IPClass::unmirroring(int N, int w, int h)
+bool IPClass::unmirroring(int N, int w, int h)
 {
+
+	// Variables //
 	int ZeroPix = N + (N * tempWidth);		// 0. pixel new
+
+	// Memory allocation // 
+	if (tempData == nullptr)
+		return false;
+
 	data = new uchar[w * h];
 
+	// Unmirror //
 	for (int i = 0; i < h; i++)
 	{
 		for (int j = 0; j < w; j++)
@@ -71,86 +93,59 @@ void IPClass::unmirroring(int N, int w, int h)
 		}
 	}
 
+	return true;
 }
 
 IPClass::~IPClass()
 {
-	delete tempData;
+	free(tempData);
+	free(data);
 }
 
 
-bool IPClass::exportToPGM(std::string fileName, uint imgWidth, uint imgHeight, int maxValue, double* imgData, bool scaleData)
+bool IPClass::exportPGM(int w, int h, double* imgData)
 {
-	printf("Exporting image to pgm...");
-	FILE* fp = nullptr;
-	fp = fopen((fileName + ".pgm").c_str(), "w+");
-	if (fp == nullptr)
+	FILE* mirrorPic = nullptr;
+
+	mirrorPic = fopen("mirrorPic.pgm", "wb");
+	if (mirrorPic == nullptr)
 		return false;
 
-	unsigned char scaledValue = 0;
-	int dataSize = imgWidth * imgHeight;
-	fprintf(fp, "P2\n%d %d\n%d\n", imgWidth, imgHeight, maxValue);
+	fprintf(mirrorPic, "P2\n%d %d\n%d\n", w, h, 255);
 
-	if (scaleData)
-	{
-		for (size_t i = 0; i < dataSize; i++)
-		{
-			scaledValue = static_cast<unsigned char>(imgData[i] * maxValue + 0.5);
-			fprintf(fp, "%d ", scaledValue);
-
-			if ((i + 1) % 70 == 0)
-				fprintf(fp, "\n");
-
-			if ((i + 1) % (dataSize / 10) == 0)
-				printf("\rExporting image to pgm... %d%% done", 10 * ((int)i + 1) / (dataSize / 10));
+	for (int i = 0; i < h; i++) {
+		for (int j = 0; j < w; j++) {
+			fprintf(mirrorPic, "%d ", static_cast<unsigned char>(imgData[i * w + j]));		
 		}
+		fprintf(mirrorPic, "\n");
 	}
-	else
-	{
-		for (size_t i = 0; i < dataSize; i++)
-		{
-			scaledValue = static_cast<unsigned char>(imgData[i] + 0.5);
-			fprintf(fp, "%d ", scaledValue);
 
-			if ((i + 1) % 70 == 0)
-				fprintf(fp, "\n");
+	fclose(mirrorPic);
 
-			if ((i + 1) % (dataSize / 10) == 0)
-				printf("\rExporting image to pgm... %d%% done", 10 * ((int)i + 1) / (dataSize / 10));
-		}
-	}
-	printf("\n");
-	fclose(fp);
-
+	printf("Export mirror to PGM successful\n");
 	return true;
 }
 
-
-bool IPClass::exportToPGM(std::string fileName, uint imgWidth, uint imgHeight, int maxValue, uchar* imgData)
+bool IPClass::exportPGM(int w, int h, uchar* imgData)
 {
-	printf("Exporting image to pgm...");
-	FILE* fp = nullptr;
-	fp = fopen((fileName + ".pgm").c_str(), "w+");
-	if (fp == nullptr)
+	FILE* unmirrorPic = nullptr;
+
+	unmirrorPic = fopen("unmirrorPic.pgm", "wb"); 
+	if (unmirrorPic == nullptr)
 		return false;
 
-	int dataSize = imgWidth * imgHeight;
-	fprintf(fp, "P2\n%d %d\n%d\n", imgWidth, imgHeight, maxValue);
-	for (size_t i = 0; i < dataSize; i++)
-	{
-		fprintf(fp, "%d ", imgData[i]);
+	fprintf(unmirrorPic, "P2\n%d %d\n%d\n", w, h, 255);
 
-		if ((i + 1) % 70 == 0)
-			fprintf(fp, "\n");
-
-		if ((i + 1) % (dataSize / 10) == 0)
-		{
-			printf("\rExporting image to pgm... %d%% done", 10 * ((int)i + 1) / (dataSize / 10));
-			//_sleep(500);
+	for (int i = 0; i < h; i++) {
+		for (int j = 0; j < w; j++) {
+			fprintf(unmirrorPic, "%d ", imgData[i * w + j]);
 		}
+		fprintf(unmirrorPic, "\n");
 	}
-	printf("\n");
-	fclose(fp);
 
+	fclose(unmirrorPic);
+
+	printf("Export unmirror to PGM successful\n");
 	return true;
+
 }

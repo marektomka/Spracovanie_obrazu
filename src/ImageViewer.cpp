@@ -50,21 +50,38 @@ bool ImageViewer::saveImage(QString filename)
 
 bool ImageViewer::invertColors()
 {
-	
-	IPClass ipmodul;
-	ipmodul.mirroring(N, vW->getImage()->width(), vW->getImage()->height(), vW->getData());
-	ipmodul.unmirroring(N, vW->getImage()->width(), vW->getImage()->height());
-
-	//ipmodul.exportToPGM("mirrorDataTest", vW->getImage()->width() + 2 * N, vW->getImage()->height() + 2 * N, 255, ipmodul.getDataM(), false);
-	
-	ipmodul.exportToPGM("mirrorDataTest", vW->getImage()->width(), vW->getImage()->height(), 255, ipmodul.getData());
-	
 
 	if (vW->isEmpty()) {
 		return false;
 	}
 
-	uchar* data = vW->getData();
+	IPClass ipmodul;
+
+	// Mirror and unmirror functions //
+	ipmodul.mirroring(N, vW->getImage()->width(), vW->getImage()->height(), vW->getData());
+	if (ipmodul.getDataM() == nullptr) 
+	{
+		printf("mirror unsuccessful\n");
+		return false;
+	}
+	else
+		printf("mirror successful\n");
+
+	ipmodul.unmirroring(N, vW->getImage()->width(), vW->getImage()->height());
+	if (ipmodul.getData() == nullptr)
+	{
+		printf("unmirror unsuccessful\n");
+		return false;
+	}
+	else
+		printf("unmirror successful\n");
+
+	// Export data to PGM // 
+	ipmodul.exportPGM(vW->getImage()->width(), vW->getImage()->height(), ipmodul.getData());
+	ipmodul.exportPGM(ipmodul.getWidthM(), ipmodul.getHeightM(), ipmodul.getDataM());
+
+
+	uchar* data = ipmodul.getData();      //uchar* data = vW->getData();
 
 	int row = vW->getImage()->bytesPerLine();
 	int depth = vW->getImage()->depth();
