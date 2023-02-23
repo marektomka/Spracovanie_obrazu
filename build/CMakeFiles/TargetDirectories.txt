@@ -1,0 +1,3 @@
+C:/Users/tomka/Desktop/Skola/STU/Inzinierske_studium/1_Ing/1_Letny_semester/Spracovanie_obrazu/ImageViewerSO/build/CMakeFiles/ImageViewer.dir
+C:/Users/tomka/Desktop/Skola/STU/Inzinierske_studium/1_Ing/1_Letny_semester/Spracovanie_obrazu/ImageViewerSO/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/tomka/Desktop/Skola/STU/Inzinierske_studium/1_Ing/1_Letny_semester/Spracovanie_obrazu/ImageViewerSO/build/CMakeFiles/ZERO_CHECK.dir

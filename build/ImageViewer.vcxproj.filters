@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\build\ImageViewer_autogen\mocs_compilation_Debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\src\IPmodul.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\src\ImageViewer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\src\ViewerWidget.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\build\ImageViewer_autogen\UVLADIE3JM\qrc_ImageViewer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\build\ImageViewer_autogen\mocs_compilation_Release.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\build\ImageViewer_autogen\mocs_compilation_MinSizeRel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\build\ImageViewer_autogen\mocs_compilation_RelWithDebInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\src\IPmodul.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\src\ImageViewer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\src\ViewerWidget.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\build\ImageViewer_autogen\include_Debug\src\ui_ImageViewer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\build\ImageViewer_autogen\include_Release\src\ui_ImageViewer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\build\ImageViewer_autogen\include_MinSizeRel\src\ui_ImageViewer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\build\ImageViewer_autogen\include_RelWithDebInfo\src\ui_ImageViewer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\build\CMakeFiles\bc41b4a24518d4fd14996e3f5651e473\autouic_(CONFIG).stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\build\CMakeFiles\4305a4edde8b75c5f90498e02fee7b9c\qrc_ImageViewer.cpp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\src\ImageViewer.ui">
+      <Filter>src</Filter>
+    </None>
+    <None Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\src\ImageViewer.qrc">
+      <Filter>src</Filter>
+    </None>
+    <None Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\build\ImageViewer_autogen\autouic_Debug.stamp" />
+    <None Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\build\ImageViewer_autogen\autouic_Release.stamp" />
+    <None Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\build\ImageViewer_autogen\autouic_MinSizeRel.stamp" />
+    <None Include="C:\Users\tomka\Desktop\Skola\STU\Inzinierske_studium\1_Ing\1_Letny_semester\Spracovanie_obrazu\ImageViewerSO\build\ImageViewer_autogen\autouic_RelWithDebInfo.stamp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{D610B011-A13D-39ED-9E74-80E8A16F34D9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{7E4515E3-E582-34E5-AAF5-0BA23E958DE5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{B4081B9B-6D0D-3A39-BC8A-9464B653A591}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{434873B8-F9ED-3A31-B663-501ECED7B036}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
