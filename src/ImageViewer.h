@@ -21,8 +21,9 @@ private:
 	QSettings settings;
 	QMessageBox msgBox;
 
-
+	// Variables // 
 	int N = 400;
+	bool opened = false;
 
 
 	//ImageViewer Events

@@ -124,7 +124,10 @@ void ImageViewer::on_actionOpen_triggered()
 		msgBox.setText("Unable to open image.");
 		msgBox.setIcon(QMessageBox::Warning);
 		msgBox.exec();
+		opened = false;
 	}
+
+	opened = true;
 }
 void ImageViewer::on_actionSave_as_triggered()
 {
@@ -154,5 +157,14 @@ void ImageViewer::on_actionExit_triggered()
 
 void ImageViewer::on_actionInvert_triggered()
 {
-	invertColors();
+	if (opened)
+	{
+		invertColors();
+	}
+	else
+	{
+		msgBox.setText("Please open image.");
+		msgBox.setIcon(QMessageBox::Warning);
+		msgBox.exec();
+	}
 }
