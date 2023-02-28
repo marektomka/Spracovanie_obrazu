@@ -96,6 +96,61 @@ bool IPClass::unmirroring(int N, int w, int h)
 	return true;
 }
 
+void IPClass::computeHistorgram(int w, int h, uchar* origData)
+{
+
+	clearHistogram();
+
+	for (int i = 0; i < h; i++)
+	{
+		for (int j = 0; j < w; j++)
+		{
+			int index = j + (i * w);
+			uchar value = origData[index];
+
+			// Min and max values // 
+			if (value < minHistValue) minHistValue = value;
+			if (value > maxHistValue) maxHistValue = value;
+			
+			
+			histogram[value]++;
+		}
+	}
+
+}
+
+void IPClass::clearHistogram()
+{
+	// Clear histogram // 
+	for (size_t i = 0; i < 256; i++)
+	{
+		histogram[i] = 0;
+	}
+
+}
+
+bool IPClass::FSHS(int w, int h, uchar* imgData)
+{
+	if (imgData == nullptr)
+		return false;
+
+	computeHistorgram(w,h,imgData);
+
+	for (int i = 0; i < h; i++)
+	{
+		for (int j = 0; j < w; j++)
+		{
+			int index = j + (i * w); 
+			double value = static_cast<double>(imgData[index]);
+			uchar newValue = static_cast<uchar>((255 * (value - minHistValue)) / (maxHistValue - minHistValue));
+			
+			imgData[index] = newValue;
+		}
+	}
+
+	return true;
+}
+
 IPClass::~IPClass()
 {
 	free(tempData);
@@ -149,3 +204,38 @@ bool IPClass::exportPGM(int w, int h, uchar* imgData)
 	return true;
 
 }
+
+
+
+
+
+
+
+/*
+bool IPmodul::FSHS(uchar* imgData, const int bytesPerLine, const int imgWidth, const int imgHeight)
+{
+	if (imgData == nullptr)
+		return false;
+
+	// compute histogram for the given image, function also finds min and max values
+	computeHistogramData(imgData, bytesPerLine, imgWidth, imgHeight);
+
+	int index = 0;
+	double temp = 0;
+	uchar scaledValue = 0;
+	for (int i = 0; i < imgHeight; i++)
+	{
+		for (int j = 0; j < imgWidth; j++)
+		{
+			index = i * bytesPerLine + j;
+			// scale values from original range [m_minValue, m_maxValue] to [0, 255]
+			temp = static_cast<double>(imgData[index]);
+			scaledValue = static_cast<uchar>(((temp - m_minValue) / (m_maxValue - m_minValue)) * 255 + 0.5);
+			imgData[index] = scaledValue;
+		}
+	}
+
+	return true;
+}
+
+*/

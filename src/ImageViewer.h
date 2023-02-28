@@ -39,4 +39,6 @@ private slots:
 	void on_actionSave_as_triggered();
 	void on_actionExit_triggered();
 	void on_actionInvert_triggered();
+	void on_actionFSHS_triggered();
+	void on_actionEdgeMirror_triggered();
 };

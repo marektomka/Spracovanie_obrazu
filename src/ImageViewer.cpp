@@ -55,33 +55,7 @@ bool ImageViewer::invertColors()
 		return false;
 	}
 
-	IPClass ipmodul;
-
-	// Mirror and unmirror functions //
-	ipmodul.mirroring(N, vW->getImage()->width(), vW->getImage()->height(), vW->getData());
-	if (ipmodul.getDataM() == nullptr) 
-	{
-		printf("mirror unsuccessful\n");
-		return false;
-	}
-	else
-		printf("mirror successful\n");
-
-	ipmodul.unmirroring(N, vW->getImage()->width(), vW->getImage()->height());
-	if (ipmodul.getData() == nullptr)
-	{
-		printf("unmirror unsuccessful\n");
-		return false;
-	}
-	else
-		printf("unmirror successful\n");
-
-	// Export data to PGM // 
-	ipmodul.exportPGM(vW->getImage()->width(), vW->getImage()->height(), ipmodul.getData());
-	ipmodul.exportPGM(ipmodul.getWidthM(), ipmodul.getHeightM(), ipmodul.getDataM());
-
-
-	uchar* data = ipmodul.getData();      //uchar* data = vW->getData();
+	uchar* data = vW->getData();
 
 	int row = vW->getImage()->bytesPerLine();
 	int depth = vW->getImage()->depth();
@@ -160,6 +134,66 @@ void ImageViewer::on_actionInvert_triggered()
 	if (opened)
 	{
 		invertColors();
+	}
+	else
+	{
+		msgBox.setText("Please open image.");
+		msgBox.setIcon(QMessageBox::Warning);
+		msgBox.exec();
+	}
+}
+
+void ImageViewer::on_actionFSHS_triggered()
+{
+	if (opened)
+	{
+		IPClass ipmodul;
+
+		ipmodul.FSHS(vW->getImage()->width(), vW->getImage()->height(), vW->getData());
+
+		printf("FSHS successful\n");
+		vW->update();
+	}
+	else
+	{
+		msgBox.setText("Please open image.");
+		msgBox.setIcon(QMessageBox::Warning);
+		msgBox.exec();
+	}
+
+	
+}
+
+void ImageViewer::on_actionEdgeMirror_triggered()
+{
+	if (opened)
+	{
+		IPClass ipmodul;
+
+		// Mirror function //
+		ipmodul.mirroring(N, vW->getImage()->width(), vW->getImage()->height(), vW->getData());
+		if (ipmodul.getDataM() == nullptr) 
+		{
+			printf("EdgeMirror unsuccessful\n");
+		}
+		else
+			printf("EdgeMirror successful\n");
+
+		// Unmirror function //
+		ipmodul.unmirroring(N, vW->getImage()->width(), vW->getImage()->height());
+		if (ipmodul.getData() == nullptr)
+		{
+			printf("EdgeUnMirror unsuccessful\n");
+		}
+		else
+			printf("EdgeUnMirror successful\n");
+
+		// Export data to PGM // 
+		ipmodul.exportPGM(vW->getImage()->width(), vW->getImage()->height(), ipmodul.getData());
+		ipmodul.exportPGM(ipmodul.getWidthM(), ipmodul.getHeightM(), ipmodul.getDataM());
+
+
+		//vW->update();
 	}
 	else
 	{

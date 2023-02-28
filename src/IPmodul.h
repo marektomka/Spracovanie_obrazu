@@ -12,9 +12,12 @@ private:
 
 	uchar* data = nullptr;
 	double* tempData = nullptr;
+	int histogram[256] = { 0 };
 
 	int tempWidth;
 	int tempHeight;
+	int minHistValue = 255;
+	int maxHistValue = 0;
 
 public:
 
@@ -25,6 +28,9 @@ public:
 	// Filter functions // 
 	bool mirroring(int N, int w, int h, uchar* origData);
 	bool unmirroring(int N, int w, int h);
+	void computeHistorgram(int w, int h, uchar* origData);
+	void clearHistogram();
+	bool FSHS(int w, int h, uchar* imgData);
 
 	// Get functions //
 	uchar* getData() { return data; };

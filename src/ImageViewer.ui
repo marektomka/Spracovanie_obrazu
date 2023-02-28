@@ -65,6 +65,8 @@
      <string>Image</string>
     </property>
     <addaction name="actionInvert"/>
+    <addaction name="actionFSHS"/>
+    <addaction name="actionEdgeMirror"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuImage"/>
@@ -115,6 +117,16 @@
   <action name="actionInvert">
    <property name="text">
     <string>Invert</string>
+   </property>
+  </action>
+  <action name="actionFSHS">
+   <property name="text">
+    <string>FSHS</string>
+   </property>
+  </action>
+  <action name="actionEdgeMirror">
+   <property name="text">
+    <string>EdgeMirror</string>
    </property>
   </action>
  </widget>
