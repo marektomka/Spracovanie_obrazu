@@ -36,6 +36,7 @@ public:
     QAction *actionInvert;
     QAction *actionFSHS;
     QAction *actionEdgeMirror;
+    QAction *actionEKVHist;
     QWidget *centralWidget;
     QHBoxLayout *horizontalLayout;
     QGroupBox *groupBox;
@@ -69,6 +70,8 @@ public:
         actionFSHS->setObjectName("actionFSHS");
         actionEdgeMirror = new QAction(ImageViewerClass);
         actionEdgeMirror->setObjectName("actionEdgeMirror");
+        actionEKVHist = new QAction(ImageViewerClass);
+        actionEKVHist->setObjectName("actionEKVHist");
         centralWidget = new QWidget(ImageViewerClass);
         centralWidget->setObjectName("centralWidget");
         horizontalLayout = new QHBoxLayout(centralWidget);
@@ -119,6 +122,7 @@ public:
         menuImage->addAction(actionInvert);
         menuImage->addAction(actionFSHS);
         menuImage->addAction(actionEdgeMirror);
+        menuImage->addAction(actionEKVHist);
 
         retranslateUi(ImageViewerClass);
 
@@ -145,6 +149,7 @@ public:
         actionInvert->setText(QCoreApplication::translate("ImageViewerClass", "Invert", nullptr));
         actionFSHS->setText(QCoreApplication::translate("ImageViewerClass", "FSHS", nullptr));
         actionEdgeMirror->setText(QCoreApplication::translate("ImageViewerClass", "EdgeMirror", nullptr));
+        actionEKVHist->setText(QCoreApplication::translate("ImageViewerClass", "EKVHist", nullptr));
         groupBox->setTitle(QCoreApplication::translate("ImageViewerClass", "Controls", nullptr));
         menuFile->setTitle(QCoreApplication::translate("ImageViewerClass", "File", nullptr));
         menuImage->setTitle(QCoreApplication::translate("ImageViewerClass", "Image", nullptr));

@@ -160,8 +160,6 @@ void ImageViewer::on_actionFSHS_triggered()
 		msgBox.setIcon(QMessageBox::Warning);
 		msgBox.exec();
 	}
-
-	
 }
 
 void ImageViewer::on_actionEdgeMirror_triggered()
@@ -194,6 +192,25 @@ void ImageViewer::on_actionEdgeMirror_triggered()
 
 
 		//vW->update();
+	}
+	else
+	{
+		msgBox.setText("Please open image.");
+		msgBox.setIcon(QMessageBox::Warning);
+		msgBox.exec();
+	}
+}
+
+void ImageViewer::on_actionEKVHist_triggered()
+{
+	if (opened)
+	{
+		IPClass ipmodul;
+
+		ipmodul.EKVHistogram(vW->getImage()->width(), vW->getImage()->height(), vW->getData());
+
+		printf("EKV histogram successful\n");
+		vW->update();
 	}
 	else
 	{

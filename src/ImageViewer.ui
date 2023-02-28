@@ -67,6 +67,7 @@
     <addaction name="actionInvert"/>
     <addaction name="actionFSHS"/>
     <addaction name="actionEdgeMirror"/>
+    <addaction name="actionEKVHist"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuImage"/>
@@ -127,6 +128,11 @@
   <action name="actionEdgeMirror">
    <property name="text">
     <string>EdgeMirror</string>
+   </property>
+  </action>
+  <action name="actionEKVHist">
+   <property name="text">
+    <string>EKVHist</string>
    </property>
   </action>
  </widget>

@@ -28,7 +28,7 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 namespace {
 struct qt_meta_stringdata_ImageViewer_t {
-    uint offsetsAndSizes[16];
+    uint offsetsAndSizes[18];
     char stringdata0[12];
     char stringdata1[24];
     char stringdata2[1];
@@ -37,6 +37,7 @@ struct qt_meta_stringdata_ImageViewer_t {
     char stringdata5[26];
     char stringdata6[24];
     char stringdata7[30];
+    char stringdata8[27];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(sizeof(qt_meta_stringdata_ImageViewer_t::offsetsAndSizes) + ofs), len 
@@ -49,7 +50,8 @@ Q_CONSTINIT static const qt_meta_stringdata_ImageViewer_t qt_meta_stringdata_Ima
         QT_MOC_LITERAL(64, 23),  // "on_actionExit_triggered"
         QT_MOC_LITERAL(88, 25),  // "on_actionInvert_triggered"
         QT_MOC_LITERAL(114, 23),  // "on_actionFSHS_triggered"
-        QT_MOC_LITERAL(138, 29)   // "on_actionEdgeMirror_triggered"
+        QT_MOC_LITERAL(138, 29),  // "on_actionEdgeMirror_triggered"
+        QT_MOC_LITERAL(168, 26)   // "on_actionEKVHist_triggered"
     },
     "ImageViewer",
     "on_actionOpen_triggered",
@@ -58,7 +60,8 @@ Q_CONSTINIT static const qt_meta_stringdata_ImageViewer_t qt_meta_stringdata_Ima
     "on_actionExit_triggered",
     "on_actionInvert_triggered",
     "on_actionFSHS_triggered",
-    "on_actionEdgeMirror_triggered"
+    "on_actionEdgeMirror_triggered",
+    "on_actionEKVHist_triggered"
 };
 #undef QT_MOC_LITERAL
 } // unnamed namespace
@@ -69,7 +72,7 @@ Q_CONSTINIT static const uint qt_meta_data_ImageViewer[] = {
       10,       // revision
        0,       // classname
        0,    0, // classinfo
-       6,   14, // methods
+       7,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -77,14 +80,16 @@ Q_CONSTINIT static const uint qt_meta_data_ImageViewer[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    0,   50,    2, 0x08,    1 /* Private */,
-       3,    0,   51,    2, 0x08,    2 /* Private */,
-       4,    0,   52,    2, 0x08,    3 /* Private */,
-       5,    0,   53,    2, 0x08,    4 /* Private */,
-       6,    0,   54,    2, 0x08,    5 /* Private */,
-       7,    0,   55,    2, 0x08,    6 /* Private */,
+       1,    0,   56,    2, 0x08,    1 /* Private */,
+       3,    0,   57,    2, 0x08,    2 /* Private */,
+       4,    0,   58,    2, 0x08,    3 /* Private */,
+       5,    0,   59,    2, 0x08,    4 /* Private */,
+       6,    0,   60,    2, 0x08,    5 /* Private */,
+       7,    0,   61,    2, 0x08,    6 /* Private */,
+       8,    0,   62,    2, 0x08,    7 /* Private */,
 
  // slots: parameters
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -115,6 +120,8 @@ Q_CONSTINIT const QMetaObject ImageViewer::staticMetaObject = { {
         // method 'on_actionFSHS_triggered'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'on_actionEdgeMirror_triggered'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'on_actionEKVHist_triggered'
         QtPrivate::TypeAndForceComplete<void, std::false_type>
     >,
     nullptr
@@ -132,6 +139,7 @@ void ImageViewer::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id,
         case 3: _t->on_actionInvert_triggered(); break;
         case 4: _t->on_actionFSHS_triggered(); break;
         case 5: _t->on_actionEdgeMirror_triggered(); break;
+        case 6: _t->on_actionEKVHist_triggered(); break;
         default: ;
         }
     }
@@ -157,13 +165,13 @@ int ImageViewer::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 6)
+        if (_id < 7)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 6;
+        _id -= 7;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 6)
+        if (_id < 7)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 6;
+        _id -= 7;
     }
     return _id;
 }

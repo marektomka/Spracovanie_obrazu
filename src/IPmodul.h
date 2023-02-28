@@ -13,6 +13,9 @@ private:
 	uchar* data = nullptr;
 	double* tempData = nullptr;
 	int histogram[256] = { 0 };
+	double histogramNORM[256] = { 0 };
+	double histogramEKV[256] = { 0 };
+
 
 	int tempWidth;
 	int tempHeight;
@@ -26,11 +29,13 @@ public:
 	IPClass(uchar* dat) { data = dat; };
 
 	// Filter functions // 
-	bool mirroring(int N, int w, int h, uchar* origData);
+	bool mirroring(int N, int w, int h, uchar* imgData);
 	bool unmirroring(int N, int w, int h);
-	void computeHistorgram(int w, int h, uchar* origData);
+	void computeHistorgram(int w, int h, uchar* imgData);
 	void clearHistogram();
 	bool FSHS(int w, int h, uchar* imgData);
+	void computeEKVHistogram(int w, int h, uchar* imgData);
+	bool EKVHistogram(int w, int h, uchar* imgData);
 
 	// Get functions //
 	uchar* getData() { return data; };

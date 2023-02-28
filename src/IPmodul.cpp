@@ -4,7 +4,7 @@ IPClass::IPClass()
 {
 }
 
-bool IPClass::mirroring(int N, int w, int h, uchar* origData)
+bool IPClass::mirroring(int N, int w, int h, uchar* imgData)
 { 
 	// Variables //
 	tempWidth = w + (2 * N);
@@ -32,7 +32,7 @@ bool IPClass::mirroring(int N, int w, int h, uchar* origData)
 		{
 			int index = j + (i * w);
 			int tempIndex = ZeroPix + j + (i * tempWidth);
-			tempData[tempIndex] = static_cast<double>(origData[index]);
+			tempData[tempIndex] = static_cast<double>(imgData[index]);
 		}
 	}
 
@@ -43,11 +43,11 @@ bool IPClass::mirroring(int N, int w, int h, uchar* origData)
 		{
 			int index = j + (N - 1 - i) * w;
 			int tempIndex = N + j + (i * tempWidth);
-			tempData[tempIndex] = static_cast<double>(origData[index]);
+			tempData[tempIndex] = static_cast<double>(imgData[index]);
 
 			index = j + ((h-1) - (N - 1) + i) * w;
 			tempIndex = N + j + (tempHeight - 1) * tempWidth - (i * tempWidth);
-			tempData[tempIndex] = static_cast<double>(origData[index]);
+			tempData[tempIndex] = static_cast<double>(imgData[index]);
 		}
 	}
 
@@ -96,21 +96,23 @@ bool IPClass::unmirroring(int N, int w, int h)
 	return true;
 }
 
-void IPClass::computeHistorgram(int w, int h, uchar* origData)
+void IPClass::computeHistorgram(int w, int h, uchar* imgData)
 {
 
+	//clearHistogram(histogram);
 	clearHistogram();
 
+	// Algorithm for histogram comp.. // 
 	for (int i = 0; i < h; i++)
 	{
 		for (int j = 0; j < w; j++)
 		{
 			int index = j + (i * w);
-			uchar value = origData[index];
+			uchar value = imgData[index];
 
 			// Min and max values // 
-			if (value < minHistValue) minHistValue = value;
-			if (value > maxHistValue) maxHistValue = value;
+			if (value < minHistValue) { minHistValue = value; }
+			if (value > maxHistValue) { maxHistValue = value; }
 			
 			
 			histogram[value]++;
@@ -122,7 +124,7 @@ void IPClass::computeHistorgram(int w, int h, uchar* origData)
 void IPClass::clearHistogram()
 {
 	// Clear histogram // 
-	for (size_t i = 0; i < 256; i++)
+	for (int i = 0; i < 256; i++)
 	{
 		histogram[i] = 0;
 	}
@@ -131,11 +133,15 @@ void IPClass::clearHistogram()
 
 bool IPClass::FSHS(int w, int h, uchar* imgData)
 {
+	// ImgData check //
 	if (imgData == nullptr)
 		return false;
 
-	computeHistorgram(w,h,imgData);
 
+	computeHistorgram(w, h, imgData);
+
+
+	// FSHS algorithm //
 	for (int i = 0; i < h; i++)
 	{
 		for (int j = 0; j < w; j++)
@@ -144,6 +150,50 @@ bool IPClass::FSHS(int w, int h, uchar* imgData)
 			double value = static_cast<double>(imgData[index]);
 			uchar newValue = static_cast<uchar>((255 * (value - minHistValue)) / (maxHistValue - minHistValue));
 			
+			imgData[index] = newValue;
+		}
+	}
+
+	return true;
+}
+
+void IPClass::computeEKVHistogram(int w, int h, uchar* imgData)
+{
+	//clearHistogram((int*)histogramNORM);
+	//clearHistogram((int*)histogramEKV);
+
+	int numPixels = w * h;
+
+	// Normalized histogram //
+	for (int i = 0; i < 256; i++)
+	{
+		histogramNORM[i] = static_cast<double>(histogram[i]) / numPixels;
+	}
+
+	// EKV histogram // 
+	histogramEKV[0] = histogramNORM[0];
+	for (int i = 1; i < 256; i++)
+	{
+		histogramEKV[i] = histogramEKV[i - 1] + histogramNORM[i];
+	}
+
+
+}
+
+bool IPClass::EKVHistogram(int w, int h, uchar* imgData)
+{
+	computeHistorgram(w, h, imgData);
+	computeEKVHistogram(w, h, imgData);
+
+	// EKV histogram algorithm //
+	for (int i = 0; i < h; i++)
+	{
+		for (int j = 0; j < w; j++)
+		{
+			int index = j + (i * w);
+			int value = static_cast<int>(imgData[index]);
+			uchar newValue = static_cast<uchar>(255 * histogramEKV[value] + 0.5);
+
 			imgData[index] = newValue;
 		}
 	}
@@ -205,37 +255,3 @@ bool IPClass::exportPGM(int w, int h, uchar* imgData)
 
 }
 
-
-
-
-
-
-
-/*
-bool IPmodul::FSHS(uchar* imgData, const int bytesPerLine, const int imgWidth, const int imgHeight)
-{
-	if (imgData == nullptr)
-		return false;
-
-	// compute histogram for the given image, function also finds min and max values
-	computeHistogramData(imgData, bytesPerLine, imgWidth, imgHeight);
-
-	int index = 0;
-	double temp = 0;
-	uchar scaledValue = 0;
-	for (int i = 0; i < imgHeight; i++)
-	{
-		for (int j = 0; j < imgWidth; j++)
-		{
-			index = i * bytesPerLine + j;
-			// scale values from original range [m_minValue, m_maxValue] to [0, 255]
-			temp = static_cast<double>(imgData[index]);
-			scaledValue = static_cast<uchar>(((temp - m_minValue) / (m_maxValue - m_minValue)) * 255 + 0.5);
-			imgData[index] = scaledValue;
-		}
-	}
-
-	return true;
-}
-
-*/

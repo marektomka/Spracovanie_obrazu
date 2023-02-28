@@ -41,4 +41,5 @@ private slots:
 	void on_actionInvert_triggered();
 	void on_actionFSHS_triggered();
 	void on_actionEdgeMirror_triggered();
+	void on_actionEKVHist_triggered();
 };
