@@ -22,7 +22,7 @@ private:
 	QMessageBox msgBox;
 
 	// Variables // 
-	int N = 400;
+	int N = 2;
 	bool opened = false;
 
 
@@ -42,4 +42,6 @@ private slots:
 	void on_actionFSHS_triggered();
 	void on_actionEdgeMirror_triggered();
 	void on_actionEKVHist_triggered();
+	void on_actionConvolution_triggered();
+
 };

@@ -36,12 +36,14 @@ public:
 	bool FSHS(int w, int h, uchar* imgData);
 	void computeEKVHistogram(int w, int h, uchar* imgData);
 	bool EKVHistogram(int w, int h, uchar* imgData);
+	bool convolution(int N, int w, int h, uchar* imgData);
 
 	// Get functions //
 	uchar* getData() { return data; };
 	double* getDataM() { return tempData; };
 	int getWidthM() { return tempWidth; };
 	int getHeightM() { return tempHeight; };
+
 
 	// Destructor //
 	~IPClass();

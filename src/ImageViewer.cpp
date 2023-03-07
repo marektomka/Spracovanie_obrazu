@@ -219,3 +219,42 @@ void ImageViewer::on_actionEKVHist_triggered()
 		msgBox.exec();
 	}
 }
+
+void ImageViewer::on_actionConvolution_triggered()
+{
+	if (opened)
+	{
+		IPClass ipmodul;
+
+		//// Mirror function //
+		//ipmodul.mirroring(N, vW->getImage()->width(), vW->getImage()->height(), vW->getData());
+		//if (ipmodul.getDataM() == nullptr)
+		//{
+		//	printf("EdgeMirror unsuccessful\n");
+		//}
+		//else
+		//	printf("EdgeMirror successful\n");
+
+		// Convolution function // 
+		ipmodul.convolution(N,vW->getImage()->width(), vW->getImage()->height(), vW->getData());
+		printf("Convolution successful\n");
+
+		//// Unmirror function //
+		//ipmodul.unmirroring(N, vW->getImage()->width(), vW->getImage()->height());
+		//if (ipmodul.getData() == nullptr)
+		//{
+		//	printf("EdgeUnMirror unsuccessful\n");
+		//}
+		//else
+		//	printf("EdgeUnMirror successful\n");
+
+		vW->update();
+	}
+	else
+	{
+		msgBox.setText("Please open image.");
+		msgBox.setIcon(QMessageBox::Warning);
+		msgBox.exec();
+	}
+
+}

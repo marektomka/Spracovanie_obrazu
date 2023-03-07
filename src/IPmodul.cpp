@@ -201,6 +201,64 @@ bool IPClass::EKVHistogram(int w, int h, uchar* imgData)
 	return true;
 }
 
+bool IPClass::convolution(int N, int w, int h, uchar* imgData)
+{
+
+	// Variables //
+	double w1 = 0.234237; double w2 = 0.112116; double w3 = 0.0542418;
+	double w4 = 0.01241; double w5 = 0.00600398; double w6 = 0.000664574;
+	double sum = 0;
+	int newI = 0, newJ;
+
+	double mask[25] = {
+	w6, w5, w4, w5, w6,
+	w5, w3, w2, w3, w5,
+	w4, w2, w1, w2, w4,
+	w5, w3, w2, w3, w5,
+	w6, w5, w4, w5, w6 };
+
+	tempWidth = w + (2 * N);
+	tempHeight = h + (2 * N);
+
+	// Mirroring //
+	mirroring(N, w, h, imgData);
+
+
+	// Convolution // 
+	
+	
+	for (int i = 2; i < tempHeight - 2; i++)
+	{
+		newJ = 0;
+		for (int j = 2; j < tempWidth - 2; j++)
+		{
+			
+			sum = 0;
+
+			for (int k = -2; k <= 2; k++)
+			{
+				for (int l = -2; l <= 2; l++)
+				{
+					int maskIndex = (l + 2) + (k + 2) * 5; 
+
+					int imageIndex = (j + l) + (i + k) * tempWidth;
+					sum += mask[maskIndex] * tempData[imageIndex];
+
+				}
+			}
+
+
+			imgData[newI * w + newJ] = static_cast<uchar>(sum + 0.5);
+
+			newJ++;
+		}
+		newI++;
+	}
+
+	
+	return true;
+}
+
 IPClass::~IPClass()
 {
 	free(tempData);
