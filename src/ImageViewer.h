@@ -23,6 +23,7 @@ private:
 
 	// Variables // 
 	int N = 2;
+	int mask = 5;
 	bool opened = false;
 
 

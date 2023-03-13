@@ -5,7 +5,6 @@ typedef unsigned char uchar;
 typedef unsigned int uint;
 
 
-
 class IPClass
 {
 private:
@@ -21,6 +20,7 @@ private:
 	int tempHeight;
 	int minHistValue = 255;
 	int maxHistValue = 0;
+	int mask = 5;
 
 public:
 
@@ -36,7 +36,7 @@ public:
 	bool FSHS(int w, int h, uchar* imgData);
 	void computeEKVHistogram(int w, int h, uchar* imgData);
 	bool EKVHistogram(int w, int h, uchar* imgData);
-	bool convolution(int N, int w, int h, uchar* imgData);
+	bool convolution(int w, int h, uchar* imgData);
 
 	// Get functions //
 	uchar* getData() { return data; };

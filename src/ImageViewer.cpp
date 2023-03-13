@@ -226,17 +226,8 @@ void ImageViewer::on_actionConvolution_triggered()
 	{
 		IPClass ipmodul;
 
-		//// Mirror function //
-		//ipmodul.mirroring(N, vW->getImage()->width(), vW->getImage()->height(), vW->getData());
-		//if (ipmodul.getDataM() == nullptr)
-		//{
-		//	printf("EdgeMirror unsuccessful\n");
-		//}
-		//else
-		//	printf("EdgeMirror successful\n");
-
 		// Convolution function // 
-		ipmodul.convolution(N,vW->getImage()->width(), vW->getImage()->height(), vW->getData());
+		ipmodul.convolution(vW->getImage()->width(), vW->getImage()->height(), vW->getData());
 		printf("Convolution successful\n");
 
 		//// Unmirror function //
