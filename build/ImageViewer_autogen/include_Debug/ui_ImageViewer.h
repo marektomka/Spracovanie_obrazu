@@ -12,15 +12,21 @@
 #include <QtCore/QVariant>
 #include <QtGui/QAction>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QPushButton>
 #include <QtWidgets/QScrollArea>
+#include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -42,6 +48,15 @@ public:
     QHBoxLayout *horizontalLayout;
     QGroupBox *groupBox;
     QGridLayout *gridLayout;
+    QGroupBox *groupBox_Explicit;
+    QVBoxLayout *verticalLayout;
+    QLabel *label;
+    QDoubleSpinBox *doubleSpinBoxTau;
+    QLabel *label_2;
+    QSpinBox *spinBoxSteps;
+    QPushButton *pushButtonExplicit;
+    QSpacerItem *verticalSpacer;
+    QGroupBox *groupBox_Implicit;
     QScrollArea *scrollArea;
     QWidget *scrollAreaWidgetContents;
     QMenuBar *menuBar;
@@ -87,6 +102,57 @@ public:
         gridLayout->setSpacing(6);
         gridLayout->setContentsMargins(11, 11, 11, 11);
         gridLayout->setObjectName("gridLayout");
+        groupBox_Explicit = new QGroupBox(groupBox);
+        groupBox_Explicit->setObjectName("groupBox_Explicit");
+        verticalLayout = new QVBoxLayout(groupBox_Explicit);
+        verticalLayout->setSpacing(6);
+        verticalLayout->setContentsMargins(11, 11, 11, 11);
+        verticalLayout->setObjectName("verticalLayout");
+        label = new QLabel(groupBox_Explicit);
+        label->setObjectName("label");
+
+        verticalLayout->addWidget(label);
+
+        doubleSpinBoxTau = new QDoubleSpinBox(groupBox_Explicit);
+        doubleSpinBoxTau->setObjectName("doubleSpinBoxTau");
+        doubleSpinBoxTau->setAlignment(Qt::AlignCenter);
+        doubleSpinBoxTau->setButtonSymbols(QAbstractSpinBox::UpDownArrows);
+        doubleSpinBoxTau->setMinimum(0.010000000000000);
+        doubleSpinBoxTau->setMaximum(0.250000000000000);
+        doubleSpinBoxTau->setSingleStep(0.010000000000000);
+
+        verticalLayout->addWidget(doubleSpinBoxTau);
+
+        label_2 = new QLabel(groupBox_Explicit);
+        label_2->setObjectName("label_2");
+
+        verticalLayout->addWidget(label_2);
+
+        spinBoxSteps = new QSpinBox(groupBox_Explicit);
+        spinBoxSteps->setObjectName("spinBoxSteps");
+        spinBoxSteps->setAlignment(Qt::AlignCenter);
+        spinBoxSteps->setMinimum(1);
+        spinBoxSteps->setMaximum(100);
+
+        verticalLayout->addWidget(spinBoxSteps);
+
+        pushButtonExplicit = new QPushButton(groupBox_Explicit);
+        pushButtonExplicit->setObjectName("pushButtonExplicit");
+
+        verticalLayout->addWidget(pushButtonExplicit);
+
+        verticalSpacer = new QSpacerItem(58, 348, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        verticalLayout->addItem(verticalSpacer);
+
+
+        gridLayout->addWidget(groupBox_Explicit, 0, 1, 1, 1);
+
+        groupBox_Implicit = new QGroupBox(groupBox);
+        groupBox_Implicit->setObjectName("groupBox_Implicit");
+
+        gridLayout->addWidget(groupBox_Implicit, 1, 1, 1, 1);
+
 
         horizontalLayout->addWidget(groupBox);
 
@@ -95,7 +161,7 @@ public:
         scrollArea->setWidgetResizable(true);
         scrollAreaWidgetContents = new QWidget();
         scrollAreaWidgetContents->setObjectName("scrollAreaWidgetContents");
-        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 729, 571));
+        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 671, 571));
         scrollArea->setWidget(scrollAreaWidgetContents);
 
         horizontalLayout->addWidget(scrollArea);
@@ -156,6 +222,11 @@ public:
         actionEKVHist->setText(QCoreApplication::translate("ImageViewerClass", "EKVHist", nullptr));
         actionConvolution->setText(QCoreApplication::translate("ImageViewerClass", "Convolution", nullptr));
         groupBox->setTitle(QCoreApplication::translate("ImageViewerClass", "Controls", nullptr));
+        groupBox_Explicit->setTitle(QCoreApplication::translate("ImageViewerClass", "Explicit scheme", nullptr));
+        label->setText(QCoreApplication::translate("ImageViewerClass", "Tau:", nullptr));
+        label_2->setText(QCoreApplication::translate("ImageViewerClass", "Steps:", nullptr));
+        pushButtonExplicit->setText(QCoreApplication::translate("ImageViewerClass", "Explicit", nullptr));
+        groupBox_Implicit->setTitle(QCoreApplication::translate("ImageViewerClass", "Implicit scheme", nullptr));
         menuFile->setTitle(QCoreApplication::translate("ImageViewerClass", "File", nullptr));
         menuImage->setTitle(QCoreApplication::translate("ImageViewerClass", "Image", nullptr));
     } // retranslateUi

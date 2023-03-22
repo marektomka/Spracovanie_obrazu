@@ -164,34 +164,23 @@ void ImageViewer::on_actionFSHS_triggered()
 
 void ImageViewer::on_actionEdgeMirror_triggered()
 {
+
+	int N = 250;    // N for mirroring
+
 	if (opened)
 	{
 		IPClass ipmodul;
 
 		// Mirror function //
-		ipmodul.mirroring(N, vW->getImage()->width(), vW->getImage()->height(), vW->getData());
-		if (ipmodul.getDataM() == nullptr) 
-		{
-			printf("EdgeMirror unsuccessful\n");
-		}
-		else
-			printf("EdgeMirror successful\n");
+		ipmodul.mirroring(N,vW->getImage()->width(), vW->getImage()->height(), vW->getImage()->bytesPerLine(), vW->getData());
 
 		// Unmirror function //
-		ipmodul.unmirroring(N, vW->getImage()->width(), vW->getImage()->height());
-		if (ipmodul.getData() == nullptr)
-		{
-			printf("EdgeUnMirror unsuccessful\n");
-		}
-		else
-			printf("EdgeUnMirror successful\n");
+		ipmodul.unmirroring(N, vW->getImage()->width(), vW->getImage()->height(), vW->getImage()->bytesPerLine());
 
 		// Export data to PGM // 
-		ipmodul.exportPGM(vW->getImage()->width(), vW->getImage()->height(), ipmodul.getData());
 		ipmodul.exportPGM(ipmodul.getWidthM(), ipmodul.getHeightM(), ipmodul.getDataM());
-
-
-		//vW->update();
+		ipmodul.exportPGM(vW->getImage()->width(), vW->getImage()->height(),vW->getImage()->bytesPerLine(), ipmodul.getData());
+		
 	}
 	else
 	{
@@ -227,17 +216,8 @@ void ImageViewer::on_actionConvolution_triggered()
 		IPClass ipmodul;
 
 		// Convolution function // 
-		ipmodul.convolution(vW->getImage()->width(), vW->getImage()->height(), vW->getData());
+		ipmodul.convolution(vW->getImage()->width(), vW->getImage()->height(), vW->getImage()->bytesPerLine(), vW->getData());
 		printf("Convolution successful\n");
-
-		//// Unmirror function //
-		//ipmodul.unmirroring(N, vW->getImage()->width(), vW->getImage()->height());
-		//if (ipmodul.getData() == nullptr)
-		//{
-		//	printf("EdgeUnMirror unsuccessful\n");
-		//}
-		//else
-		//	printf("EdgeUnMirror successful\n");
 
 		vW->update();
 	}
@@ -249,3 +229,27 @@ void ImageViewer::on_actionConvolution_triggered()
 	}
 
 }
+
+void ImageViewer::on_pushButtonExplicit_clicked()
+{
+	double tau = ui->doubleSpinBoxTau->value();
+	int steps = ui->spinBoxSteps->value();
+
+	if (opened)
+	{
+		IPClass ipmodul;
+		ipmodul.computeExplicit(steps, tau, vW->getImage()->width(), vW->getImage()->height(), vW->getImage()->bytesPerLine(), vW->getData());
+
+		vW->update();
+		printf("Explicit successful\n");
+	}
+	else
+	{
+		msgBox.setText("Please open image.");
+		msgBox.setIcon(QMessageBox::Warning);
+		msgBox.exec();
+	}
+
+}
+
+

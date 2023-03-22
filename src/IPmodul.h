@@ -29,14 +29,16 @@ public:
 	IPClass(uchar* dat) { data = dat; };
 
 	// Filter functions // 
-	bool mirroring(int N, int w, int h, uchar* imgData);
-	bool unmirroring(int N, int w, int h);
+	bool mirroring(int N, int w, int h,int bpl, uchar* imgData);
+	bool mirroring(int N, int w, int h,int bpl, double* imgData);
+	bool unmirroring(int N, int w, int h, int bpl);
 	void computeHistorgram(int w, int h, uchar* imgData);
 	void clearHistogram();
 	bool FSHS(int w, int h, uchar* imgData);
 	void computeEKVHistogram(int w, int h, uchar* imgData);
 	bool EKVHistogram(int w, int h, uchar* imgData);
-	bool convolution(int w, int h, uchar* imgData);
+	bool convolution(int w, int h,int bpl, uchar* imgData);
+	double computeExplicit(int steps, double tau, int w, int h, int bpl, uchar* imgData);
 
 	// Get functions //
 	uchar* getData() { return data; };
@@ -50,5 +52,5 @@ public:
 
 	// Export functions // 
 	bool exportPGM(int w, int h, double* imgData);
-	bool exportPGM(int w, int h, uchar* imgData);
+	bool exportPGM(int w, int h, int bpl, uchar* imgData);
 };

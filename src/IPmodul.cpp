@@ -4,7 +4,7 @@ IPClass::IPClass()
 {
 }
 
-bool IPClass::mirroring(int N, int w, int h, uchar* imgData)
+bool IPClass::mirroring(int N, int w, int h, int bpl, uchar* imgData)
 { 
 	// Variables //
 	tempWidth = w + (2 * N);
@@ -14,7 +14,7 @@ bool IPClass::mirroring(int N, int w, int h, uchar* imgData)
 	// Delete old data //
 	if (tempData != nullptr)
 	{
-		free(tempData); 
+		delete[] tempData;
 		tempData = nullptr;
 	}
 
@@ -30,7 +30,7 @@ bool IPClass::mirroring(int N, int w, int h, uchar* imgData)
 	{
 		for (int j = 0; j < w; j++)
 		{
-			int index = j + (i * w);
+			int index = j + (i * bpl);
 			int tempIndex = ZeroPix + j + (i * tempWidth);
 			tempData[tempIndex] = static_cast<double>(imgData[index]);
 		}
@@ -41,12 +41,12 @@ bool IPClass::mirroring(int N, int w, int h, uchar* imgData)
 	{
 		for (int j = 0; j < w; j++)
 		{
-			int index = j + (N - 1 - i) * w;
+			int index = j + (N - 1 - i) * bpl;
 			int tempIndex = N + j + (i * tempWidth);
 			tempData[tempIndex] = static_cast<double>(imgData[index]);
 
-			index = j + ((h-1) - (N - 1) + i) * w;
-			tempIndex = N + j + (tempHeight - 1) * tempWidth - (i * tempWidth);
+			index = j + (h - N + i) * bpl;
+			tempIndex = N + j + (tempHeight - 1 - i) * tempWidth;
 			tempData[tempIndex] = static_cast<double>(imgData[index]);
 		}
 	}
@@ -58,11 +58,11 @@ bool IPClass::mirroring(int N, int w, int h, uchar* imgData)
 		for (int j = 0; j < N; j++)
 		{
 			int index1 = (i * tempWidth) + j;
-			int index2 = (2 * N) + (i * tempWidth) - j;
+			int index2 = 2 * N - 1 + (i * tempWidth) - j;
 			tempData[index1] = tempData[index2];
 
 			index1 = (tempWidth - 1) + (i * tempWidth) - j;
-			index2 = w + j + (i * tempWidth);
+			index2 = (tempWidth - 2 * N) + j + (i * tempWidth);
 			tempData[index1] = tempData[index2];
 		}
 	}
@@ -70,7 +70,76 @@ bool IPClass::mirroring(int N, int w, int h, uchar* imgData)
 	return true;
 }
 
-bool IPClass::unmirroring(int N, int w, int h)
+bool IPClass::mirroring(int N, int w, int h,int bpl, double* imgData)
+{
+
+	// Variables //
+	tempWidth = w + (2 * N);
+	tempHeight = h + (2 * N);
+	int ZeroPix = N + (N * tempWidth);		// 0. pixel original
+
+	// Delete old data //
+	if (tempData != nullptr)
+	{
+		delete[] tempData;
+		tempData = nullptr;
+	}
+
+	// Memory allocation // 
+	tempData = new double[tempWidth * tempHeight];
+
+	if (tempData == nullptr)
+		return false;
+
+
+	// Copy original data // 
+	for (int i = 0; i < h; i++)
+	{
+		for (int j = 0; j < w; j++)
+		{
+			int index = j + (i * bpl);
+			int tempIndex = ZeroPix + j + (i * tempWidth);
+			tempData[tempIndex] = imgData[index];
+		}
+	}
+
+	// Upper and lower mirror //
+	for (int i = 0; i < N; i++)
+	{
+		for (int j = 0; j < w; j++)
+		{
+			int index = j + (N - 1 - i) * bpl;
+			int tempIndex = N + j + (i * tempWidth);
+			tempData[tempIndex] = imgData[index];
+
+			index = j + (h - N + i) * bpl;
+			tempIndex = N + j + (tempHeight - 1 - i) * tempWidth;
+			tempData[tempIndex] = imgData[index];
+
+		}
+	}
+
+
+	// Left and right mirror //
+	for (int i = 0; i < tempHeight; i++)
+	{
+		for (int j = 0; j < N; j++)
+		{
+			int index1 = (i * tempWidth) + j;
+			int index2 = (2 * N - 1) + (i * tempWidth) - j;
+			tempData[index1] = tempData[index2];
+
+			index1 = (tempWidth - 1) + (i * tempWidth) - j;
+			index2 = (tempWidth - 2 * N) + j + (i * tempWidth);
+			tempData[index1] = tempData[index2];
+
+		}
+	}
+
+	return true;
+}
+
+bool IPClass::unmirroring(int N, int w, int h, int bpl)
 {
 
 	// Variables //
@@ -80,14 +149,14 @@ bool IPClass::unmirroring(int N, int w, int h)
 	if (tempData == nullptr)
 		return false;
 
-	data = new uchar[w * h];
+	data = new uchar[w * h]{0};
 
 	// Unmirror //
 	for (int i = 0; i < h; i++)
 	{
 		for (int j = 0; j < w; j++)
 		{
-			int index = j + (i * w);
+			int index = j + (i * bpl);
 			int tempIndex = ZeroPix + j + (i * tempWidth);
 			data[index] = static_cast<uchar>(tempData[tempIndex] + 0.5);
 		}
@@ -201,7 +270,7 @@ bool IPClass::EKVHistogram(int w, int h, uchar* imgData)
 	return true;
 }
 
-bool IPClass::convolution(int w, int h, uchar* imgData)
+bool IPClass::convolution(int w, int h, int bpl, uchar* imgData)
 {
 
 	// Variables //
@@ -209,7 +278,7 @@ bool IPClass::convolution(int w, int h, uchar* imgData)
 	double w4 = 0.01241; double w5 = 0.00600398; double w6 = 0.000664574;
 	double sum = 0;
 	int newI = 0, newJ; 
-	int N = mask / 2;
+	int N = (mask-1) / 2;
 
 	double mask[25] = {
 	w6, w5, w4, w5, w6,
@@ -222,18 +291,17 @@ bool IPClass::convolution(int w, int h, uchar* imgData)
 	tempHeight = h + (2 * N);
 
 	// Mirroring //
-	mirroring(N, w, h, imgData);
+	mirroring(N, w, h,bpl, imgData);
 
 
 	// Convolution // 
-	
 	for (int i = N; i < tempHeight - N; i++)
 	{
 		newJ = 0;
 		for (int j = N; j < tempWidth - N; j++)
 		{
 			
-			sum = 0; // 
+			sum = 0; 
 
 			for (int k = -N; k <= N; k++)
 			{
@@ -247,7 +315,7 @@ bool IPClass::convolution(int w, int h, uchar* imgData)
 				}
 			}
 
-			imgData[newI * w + newJ] = static_cast<uchar>(sum + 0.5);
+			imgData[newI * bpl + newJ] = static_cast<uchar>(sum + 0.5);
 
 			newJ++;
 		}
@@ -256,6 +324,63 @@ bool IPClass::convolution(int w, int h, uchar* imgData)
 
 	
 	return true;
+}
+
+double IPClass::computeExplicit(int steps, double tau, int w, int h, int bpl, uchar* imgData)
+{
+	int N = 1;
+	tempWidth = w + (2 * N);
+	tempHeight = h + (2 * N);
+	int ZeroPix = N + (N * tempWidth);      	// 0. pixel new
+
+	double* stepExpli = new double[w * h] {0.0};
+
+	// Explicit // 
+
+	for (int t = 1; t <= steps; t++)
+	{
+		double sumicka = 0;
+		if (t == 1)
+		{
+			mirroring(N, w, h, bpl, imgData);
+		}
+		else mirroring(N, w, h, w, stepExpli);
+		
+	
+		for (int i = 0; i < h; i++)
+		{
+			for (int j = 0; j < w; j++)
+			{
+				double uN = 0; double uS = 0; 
+				double uE = 0; double uW = 0;
+				double un = 0;
+				
+				int index = j + (i * w);
+				int tempIndex = ZeroPix + j + i * tempWidth;
+
+				uN = tempData[tempIndex - tempWidth];
+				uS = tempData[tempIndex + tempWidth];
+				uE = tempData[tempIndex + 1];
+				uW = tempData[tempIndex - 1];
+
+				double u = (1.0 - 4.0 * tau) * tempData[tempIndex] + tau * (uN + uS + uE + uW);
+				stepExpli[index] = u;
+
+				sumicka += stepExpli[index];
+				if (t == steps)
+				{
+					imgData[index] = static_cast<uchar>(stepExpli[index] + 0.5);
+				}
+				
+			}
+		}
+
+		printf("%.10lf\n", sumicka / (h * w));
+
+	}
+
+
+	return 0.0;
 }
 
 IPClass::~IPClass()
@@ -277,7 +402,7 @@ bool IPClass::exportPGM(int w, int h, double* imgData)
 
 	for (int i = 0; i < h; i++) {
 		for (int j = 0; j < w; j++) {
-			fprintf(mirrorPic, "%d ", static_cast<unsigned char>(imgData[i * w + j]));		
+			fprintf(mirrorPic, "%d ", static_cast<uchar>(imgData[i * w + j] + 0.5));
 		}
 		fprintf(mirrorPic, "\n");
 	}
@@ -288,7 +413,7 @@ bool IPClass::exportPGM(int w, int h, double* imgData)
 	return true;
 }
 
-bool IPClass::exportPGM(int w, int h, uchar* imgData)
+bool IPClass::exportPGM(int w, int h, int bpl, uchar* imgData)
 {
 	FILE* unmirrorPic = nullptr;
 
@@ -300,7 +425,7 @@ bool IPClass::exportPGM(int w, int h, uchar* imgData)
 
 	for (int i = 0; i < h; i++) {
 		for (int j = 0; j < w; j++) {
-			fprintf(unmirrorPic, "%d ", imgData[i * w + j]);
+			fprintf(unmirrorPic, "%d ", imgData[i * bpl + j]);
 		}
 		fprintf(unmirrorPic, "\n");
 	}
