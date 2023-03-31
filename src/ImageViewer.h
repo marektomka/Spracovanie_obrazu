@@ -43,5 +43,6 @@ private slots:
 	void on_actionEKVHist_triggered();
 	void on_actionConvolution_triggered();
 	void on_pushButtonExplicit_clicked();
+	void on_pushButtonImplicit_clicked();
 
 };

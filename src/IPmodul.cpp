@@ -43,10 +43,10 @@ bool IPClass::mirroring(int N, int w, int h, int bpl, uchar* imgData)
 		{
 			int index = j + (N - 1 - i) * bpl;
 			int tempIndex = N + j + (i * tempWidth);
-			tempData[tempIndex] = static_cast<double>(imgData[index]);
+			tempData[tempIndex] = static_cast<double>(imgData[index]);   // upper edge index
 
 			index = j + (h - N + i) * bpl;
-			tempIndex = N + j + (tempHeight - 1 - i) * tempWidth;
+			tempIndex = N + j + (tempHeight - 1 - i) * tempWidth;  // lower edge index
 			tempData[tempIndex] = static_cast<double>(imgData[index]);
 		}
 	}
@@ -57,11 +57,11 @@ bool IPClass::mirroring(int N, int w, int h, int bpl, uchar* imgData)
 	{
 		for (int j = 0; j < N; j++)
 		{
-			int index1 = (i * tempWidth) + j;
+			int index1 = (i * tempWidth) + j;  // left edge index
 			int index2 = 2 * N - 1 + (i * tempWidth) - j;
-			tempData[index1] = tempData[index2];
+			tempData[index1] = tempData[index2]; 
 
-			index1 = (tempWidth - 1) + (i * tempWidth) - j;
+			index1 = (tempWidth - 1) + (i * tempWidth) - j;  // right edge index
 			index2 = (tempWidth - 2 * N) + j + (i * tempWidth);
 			tempData[index1] = tempData[index2];
 		}
@@ -109,11 +109,11 @@ bool IPClass::mirroring(int N, int w, int h,int bpl, double* imgData)
 		for (int j = 0; j < w; j++)
 		{
 			int index = j + (N - 1 - i) * bpl;
-			int tempIndex = N + j + (i * tempWidth);
+			int tempIndex = N + j + (i * tempWidth);  // upper edge index
 			tempData[tempIndex] = imgData[index];
 
 			index = j + (h - N + i) * bpl;
-			tempIndex = N + j + (tempHeight - 1 - i) * tempWidth;
+			tempIndex = N + j + (tempHeight - 1 - i) * tempWidth;  // lower edge index
 			tempData[tempIndex] = imgData[index];
 
 		}
@@ -125,11 +125,11 @@ bool IPClass::mirroring(int N, int w, int h,int bpl, double* imgData)
 	{
 		for (int j = 0; j < N; j++)
 		{
-			int index1 = (i * tempWidth) + j;
+			int index1 = (i * tempWidth) + j; // left edge index
 			int index2 = (2 * N - 1) + (i * tempWidth) - j;
 			tempData[index1] = tempData[index2];
 
-			index1 = (tempWidth - 1) + (i * tempWidth) - j;
+			index1 = (tempWidth - 1) + (i * tempWidth) - j; // right edge index
 			index2 = (tempWidth - 2 * N) + j + (i * tempWidth);
 			tempData[index1] = tempData[index2];
 
@@ -139,7 +139,7 @@ bool IPClass::mirroring(int N, int w, int h,int bpl, double* imgData)
 	return true;
 }
 
-bool IPClass::unmirroring(int N, int w, int h, int bpl)
+bool IPClass::unmirroring(int N, int w, int h, int bpl, uchar* imgData)
 {
 
 	// Variables //
@@ -149,16 +149,14 @@ bool IPClass::unmirroring(int N, int w, int h, int bpl)
 	if (tempData == nullptr)
 		return false;
 
-	data = new uchar[w * h]{0};
-
 	// Unmirror //
 	for (int i = 0; i < h; i++)
 	{
 		for (int j = 0; j < w; j++)
 		{
-			int index = j + (i * bpl);
+			int index = j + (i * w);
 			int tempIndex = ZeroPix + j + (i * tempWidth);
-			data[index] = static_cast<uchar>(tempData[tempIndex] + 0.5);
+			imgData[index] = static_cast<uchar>(tempData[tempIndex] + 0.5);
 		}
 	}
 
@@ -335,7 +333,7 @@ double IPClass::computeExplicit(int steps, double tau, int w, int h, int bpl, uc
 
 	double* stepExpli = new double[w * h] {0.0};
 
-	// Explicit // 
+	// EXPLICIT // 
 
 	for (int t = 1; t <= steps; t++)
 	{
@@ -353,7 +351,7 @@ double IPClass::computeExplicit(int steps, double tau, int w, int h, int bpl, uc
 			{
 				double uN = 0; double uS = 0; 
 				double uE = 0; double uW = 0;
-				double un = 0;
+				//double un = 0;
 				
 				int index = j + (i * w);
 				int tempIndex = ZeroPix + j + i * tempWidth;
@@ -383,10 +381,196 @@ double IPClass::computeExplicit(int steps, double tau, int w, int h, int bpl, uc
 	return 0.0;
 }
 
+double IPClass::computeImplicit(double omega, double tau, int steps, int w, int h, int bpl, uchar* imgData)
+{
+	int N = 1;
+
+	mirroring(N, w, h, bpl, imgData);
+
+	tempWidth = w + (2 * N);
+	tempHeight = h + (2 * N);
+
+	double sum = 0.0;   // sum to - mean value of original image
+	double meanOrig = 0.0;  // mean value of original image
+	double meanFilter = 0.0;
+	double toler = 0.000001;
+	double rez = 0.0;
+	double tempRez = 0.0;
+	double sigma = 0.0;
+	int iter = 0;
+	int maxIter = 100;
+
+	double* b = new double[tempWidth * tempHeight] {0.0};  // right side
+	double* phi = tempData;  // mirrored image with edges (before unmirror) 
+
+	double aii = 1.0 + 4 * tau;
+	double aij = -tau;
+
+	double phiN = 0.0; double phiS = 0.0;
+	double phiE = 0.0; double phiW = 0.0;
+	double phiC = 0.0;
+
+
+	// compute mean value of original image // 
+	for (size_t i = 0; i < h; i++)
+	{
+		for (size_t j = 0; j < w; j++)
+		{
+			sum += static_cast<double>(imgData[i * bpl + j]);
+		}
+	}
+	meanOrig = sum / (w * h);
+	printf("Mean value of original image: %.10lf\n", meanOrig);
+
+	
+	// Right side // 
+	for (size_t i = 0; i < tempHeight; i++)
+	{
+		for (size_t j = 0; j < tempWidth; j++)
+		{
+			b[i * tempWidth + j] = static_cast<double>(tempData[i * tempWidth + j]);
+		}
+	}
+
+
+
+	// IMPLICIT //
+	for (size_t t = 0; t < steps; t++)
+	{
+		// SOR algorithm //
+		iter = 0;
+
+		rez = 0.0;
+		do
+		{
+			iter++;
+
+			for (size_t i = N; i < tempHeight - N; i++)
+			{
+				for (size_t j = N; j < tempWidth - N; j++)
+				{
+					phiN = 0.0; phiS = 0.0; phiE = 0.0; phiW = 0.0;
+					
+					phiC = phi[j + i * tempWidth];
+					phiN = phi[j + (i - 1) * tempWidth];
+					phiS = phi[j + (i + 1) * tempWidth];
+					phiE = phi[j + i * tempWidth + 1];
+					phiW = phi[j + i * tempWidth - 1];
+					
+					sigma = aij * (phiN + phiS + phiE + phiW);
+					phi[j + i * tempWidth] = (1.0 - omega) * phi[j + i * tempWidth] + omega * (b[j + i * tempWidth] - sigma) / aii;
+					
+
+				}
+			}
+			
+			// update edges // 
+			mirrorEdges(N);
+
+			// compute residuals // 
+			// Ax - b // 
+			tempRez = 0.0;
+			rez = 0.0;
+			for (size_t i = N; i < tempHeight - N; i++)
+			{
+				for (size_t j = N; j < tempWidth - N; j++)
+				{
+					phiN = 0.0; phiS = 0.0; phiE = 0.0; phiW = 0.0;
+
+					phiC = phi[j + i * tempWidth];
+					phiN = phi[j + (i - 1) * tempWidth];
+					phiS = phi[j + (i + 1) * tempWidth];
+					phiE = phi[j + i * tempWidth + 1];
+					phiW = phi[j + i * tempWidth - 1];
+
+					tempRez = (aii * phiC + aij * (phiN + phiS + phiE + phiW)) - b[j + i * tempWidth];
+					rez += tempRez * tempRez;
+				}
+			}
+
+			if (sqrt(rez) < toler)
+			{
+				break;
+			}
+
+			printf("Time step: %d .. Iteration: %d .. Rez: %.10lf\n", t, iter, sqrt(rez));
+
+		} while (iter < maxIter);
+
+
+
+		// Compute mean value of new image // 
+		sum = 0.0;
+		meanFilter = 0.0;
+		for (size_t i = N; i < tempHeight - N; i++)
+		{
+			for (size_t j = N; j < tempWidth - N; j++)
+			{
+				int index = j + i * tempWidth;
+
+				sum += phi[index];
+
+				b[index] = phi[index];   // update right side 
+			}
+		}
+		meanFilter = sum / (w * h);
+		printf("End in step: %d ..... Iteration: %d .....  Mean value: %.10lf\n", t, iter, meanFilter);
+
+
+
+	}
+
+	unmirroring(N, w, h, bpl, imgData);
+
+	delete[] b;
+
+	return 0.0;
+}
+
+void IPClass::mirrorEdges(int N)
+{
+	int centerIndex = -1;
+	int edgeIndex = -1;
+
+	// Upper and lower mirror //
+	for (int i = 0; i < N; i++)
+	{
+		for (int j = N; j < tempWidth - N; j++)
+		{
+			centerIndex = j + (i + N) * tempWidth;
+			edgeIndex = j + (N - 1 - i) * tempWidth;		// upper edge index
+			tempData[edgeIndex] = tempData[centerIndex];
+
+			centerIndex = (tempHeight - N - 1 - i) * tempWidth + j;
+			edgeIndex = (tempHeight - N + i) * tempWidth + j;  // lower edge index
+			tempData[edgeIndex] = tempData[centerIndex];
+
+		}
+	}
+
+	// Left and right mirror //
+	for (int i = 0; i < tempHeight; i++)
+	{
+		for (int j = 0; j < N; j++)
+		{
+			centerIndex = (i * tempWidth) + (N + j);
+			edgeIndex = (i * tempWidth) + (N - 1 - j);  // left edge index
+			tempData[edgeIndex] = tempData[centerIndex];
+
+			centerIndex = (tempWidth - N - 1 - j) + (i * tempWidth);
+			edgeIndex = (tempWidth - N + j) + (i * tempWidth);  // right edge index
+			tempData[edgeIndex] = tempData[centerIndex];
+		}
+	}
+
+	// control of mirror function
+	// exportPGM(tempWidth, tempHeight, tempData);
+
+}
+
 IPClass::~IPClass()
 {
-	free(tempData);
-	free(data);
+	delete[] tempData;
 }
 
 

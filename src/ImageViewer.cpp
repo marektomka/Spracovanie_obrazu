@@ -175,11 +175,11 @@ void ImageViewer::on_actionEdgeMirror_triggered()
 		ipmodul.mirroring(N,vW->getImage()->width(), vW->getImage()->height(), vW->getImage()->bytesPerLine(), vW->getData());
 
 		// Unmirror function //
-		ipmodul.unmirroring(N, vW->getImage()->width(), vW->getImage()->height(), vW->getImage()->bytesPerLine());
+		ipmodul.unmirroring(N, vW->getImage()->width(), vW->getImage()->height(), vW->getImage()->bytesPerLine(), vW->getData());
 
 		// Export data to PGM // 
 		ipmodul.exportPGM(ipmodul.getWidthM(), ipmodul.getHeightM(), ipmodul.getDataM());
-		ipmodul.exportPGM(vW->getImage()->width(), vW->getImage()->height(),vW->getImage()->bytesPerLine(), ipmodul.getData());
+		ipmodul.exportPGM(vW->getImage()->width(), vW->getImage()->height(),vW->getImage()->bytesPerLine(), vW->getData());
 		
 	}
 	else
@@ -233,7 +233,7 @@ void ImageViewer::on_actionConvolution_triggered()
 void ImageViewer::on_pushButtonExplicit_clicked()
 {
 	double tau = ui->doubleSpinBoxTau->value();
-	int steps = ui->spinBoxSteps->value();
+	int steps = ui->spinBoxStepsExplicit->value();
 
 	if (opened)
 	{
@@ -249,6 +249,33 @@ void ImageViewer::on_pushButtonExplicit_clicked()
 		msgBox.setIcon(QMessageBox::Warning);
 		msgBox.exec();
 	}
+
+}
+
+void ImageViewer::on_pushButtonImplicit_clicked()
+{
+	double tau = ui->doubleSpinBoxTauImplicit->value();
+	double omega = ui->doubleSpinBoxOmega->value();
+	int steps = ui->spinBoxStepsImplicit->value();
+
+	if (opened)
+	{
+		IPClass ipmodul;
+		ipmodul.computeImplicit(omega, tau, steps, vW->getImage()->width(), vW->getImage()->height(), vW->getImage()->bytesPerLine(), vW->getData());
+
+		vW->update();
+
+		printf("Implicit successful\n");
+		
+
+	}
+	else
+	{
+		msgBox.setText("Please open image.");
+		msgBox.setIcon(QMessageBox::Warning);
+		msgBox.exec();
+	}
+
 
 }
 
