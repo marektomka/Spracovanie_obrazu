@@ -44,5 +44,6 @@ private slots:
 	void on_actionConvolution_triggered();
 	void on_pushButtonExplicit_clicked();
 	void on_pushButtonImplicit_clicked();
+	void on_pushButtonPM_clicked();
 
 };

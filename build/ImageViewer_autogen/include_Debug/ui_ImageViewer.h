@@ -62,6 +62,19 @@ public:
     QPushButton *pushButtonImplicit;
     QLabel *label_5;
     QSpinBox *spinBoxStepsImplicit;
+    QGroupBox *groupBox_2;
+    QFormLayout *formLayout_3;
+    QLabel *label_6;
+    QDoubleSpinBox *doubleSpinBoxSigmaPM;
+    QLabel *label_7;
+    QDoubleSpinBox *doubleSpinBoxTauPM;
+    QLabel *label_8;
+    QDoubleSpinBox *doubleSpinBoxKPM;
+    QLabel *label_9;
+    QDoubleSpinBox *doubleSpinBoxOmegaPM;
+    QLabel *label_10;
+    QSpinBox *spinBoxStepsPM;
+    QPushButton *pushButtonPM;
     QSpacerItem *verticalSpacer_3;
     QScrollArea *scrollArea;
     QWidget *scrollAreaWidgetContents;
@@ -100,7 +113,7 @@ public:
         centralWidget->setObjectName("centralWidget");
         groupBox = new QGroupBox(centralWidget);
         groupBox->setObjectName("groupBox");
-        groupBox->setGeometry(QRect(20, 10, 138, 380));
+        groupBox->setGeometry(QRect(30, 10, 138, 571));
         QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -170,6 +183,7 @@ public:
         sizePolicy1.setVerticalStretch(0);
         sizePolicy1.setHeightForWidth(doubleSpinBoxTauImplicit->sizePolicy().hasHeightForWidth());
         doubleSpinBoxTauImplicit->setSizePolicy(sizePolicy1);
+        doubleSpinBoxTauImplicit->setAlignment(Qt::AlignCenter);
         doubleSpinBoxTauImplicit->setMinimum(0.010000000000000);
         doubleSpinBoxTauImplicit->setSingleStep(0.010000000000000);
 
@@ -183,6 +197,7 @@ public:
 
         doubleSpinBoxOmega = new QDoubleSpinBox(groupBox_Implicit);
         doubleSpinBoxOmega->setObjectName("doubleSpinBoxOmega");
+        doubleSpinBoxOmega->setAlignment(Qt::AlignCenter);
         doubleSpinBoxOmega->setMinimum(0.010000000000000);
         doubleSpinBoxOmega->setSingleStep(0.010000000000000);
         doubleSpinBoxOmega->setValue(1.250000000000000);
@@ -209,6 +224,87 @@ public:
 
 
         verticalLayout->addWidget(groupBox_Implicit);
+
+        groupBox_2 = new QGroupBox(groupBox);
+        groupBox_2->setObjectName("groupBox_2");
+        formLayout_3 = new QFormLayout(groupBox_2);
+        formLayout_3->setSpacing(6);
+        formLayout_3->setContentsMargins(11, 11, 11, 11);
+        formLayout_3->setObjectName("formLayout_3");
+        label_6 = new QLabel(groupBox_2);
+        label_6->setObjectName("label_6");
+
+        formLayout_3->setWidget(0, QFormLayout::LabelRole, label_6);
+
+        doubleSpinBoxSigmaPM = new QDoubleSpinBox(groupBox_2);
+        doubleSpinBoxSigmaPM->setObjectName("doubleSpinBoxSigmaPM");
+        doubleSpinBoxSigmaPM->setAlignment(Qt::AlignCenter);
+        doubleSpinBoxSigmaPM->setSingleStep(0.010000000000000);
+        doubleSpinBoxSigmaPM->setValue(0.500000000000000);
+
+        formLayout_3->setWidget(0, QFormLayout::FieldRole, doubleSpinBoxSigmaPM);
+
+        label_7 = new QLabel(groupBox_2);
+        label_7->setObjectName("label_7");
+
+        formLayout_3->setWidget(1, QFormLayout::LabelRole, label_7);
+
+        doubleSpinBoxTauPM = new QDoubleSpinBox(groupBox_2);
+        doubleSpinBoxTauPM->setObjectName("doubleSpinBoxTauPM");
+        doubleSpinBoxTauPM->setAlignment(Qt::AlignCenter);
+        doubleSpinBoxTauPM->setSingleStep(0.100000000000000);
+        doubleSpinBoxTauPM->setValue(1.000000000000000);
+
+        formLayout_3->setWidget(1, QFormLayout::FieldRole, doubleSpinBoxTauPM);
+
+        label_8 = new QLabel(groupBox_2);
+        label_8->setObjectName("label_8");
+
+        formLayout_3->setWidget(2, QFormLayout::LabelRole, label_8);
+
+        doubleSpinBoxKPM = new QDoubleSpinBox(groupBox_2);
+        doubleSpinBoxKPM->setObjectName("doubleSpinBoxKPM");
+        doubleSpinBoxKPM->setAlignment(Qt::AlignCenter);
+        doubleSpinBoxKPM->setSingleStep(0.100000000000000);
+        doubleSpinBoxKPM->setValue(0.100000000000000);
+
+        formLayout_3->setWidget(2, QFormLayout::FieldRole, doubleSpinBoxKPM);
+
+        label_9 = new QLabel(groupBox_2);
+        label_9->setObjectName("label_9");
+        label_9->setEnabled(true);
+
+        formLayout_3->setWidget(3, QFormLayout::LabelRole, label_9);
+
+        doubleSpinBoxOmegaPM = new QDoubleSpinBox(groupBox_2);
+        doubleSpinBoxOmegaPM->setObjectName("doubleSpinBoxOmegaPM");
+        doubleSpinBoxOmegaPM->setAlignment(Qt::AlignCenter);
+        doubleSpinBoxOmegaPM->setMinimum(0.010000000000000);
+        doubleSpinBoxOmegaPM->setSingleStep(0.010000000000000);
+        doubleSpinBoxOmegaPM->setValue(1.250000000000000);
+
+        formLayout_3->setWidget(3, QFormLayout::FieldRole, doubleSpinBoxOmegaPM);
+
+        label_10 = new QLabel(groupBox_2);
+        label_10->setObjectName("label_10");
+
+        formLayout_3->setWidget(4, QFormLayout::LabelRole, label_10);
+
+        spinBoxStepsPM = new QSpinBox(groupBox_2);
+        spinBoxStepsPM->setObjectName("spinBoxStepsPM");
+        spinBoxStepsPM->setAlignment(Qt::AlignCenter);
+        spinBoxStepsPM->setMinimum(1);
+        spinBoxStepsPM->setMaximum(20);
+
+        formLayout_3->setWidget(4, QFormLayout::FieldRole, spinBoxStepsPM);
+
+        pushButtonPM = new QPushButton(groupBox_2);
+        pushButtonPM->setObjectName("pushButtonPM");
+
+        formLayout_3->setWidget(5, QFormLayout::SpanningRole, pushButtonPM);
+
+
+        verticalLayout->addWidget(groupBox_2);
 
         verticalSpacer_3 = new QSpacerItem(93, 62, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
@@ -287,6 +383,13 @@ public:
         label_3->setText(QCoreApplication::translate("ImageViewerClass", "Omega:", nullptr));
         pushButtonImplicit->setText(QCoreApplication::translate("ImageViewerClass", "Implicit", nullptr));
         label_5->setText(QCoreApplication::translate("ImageViewerClass", "Steps:", nullptr));
+        groupBox_2->setTitle(QCoreApplication::translate("ImageViewerClass", "Perona-Malik", nullptr));
+        label_6->setText(QCoreApplication::translate("ImageViewerClass", "Sigma:", nullptr));
+        label_7->setText(QCoreApplication::translate("ImageViewerClass", "Tau:", nullptr));
+        label_8->setText(QCoreApplication::translate("ImageViewerClass", "K:", nullptr));
+        label_9->setText(QCoreApplication::translate("ImageViewerClass", "Omega:", nullptr));
+        label_10->setText(QCoreApplication::translate("ImageViewerClass", "Steps:", nullptr));
+        pushButtonPM->setText(QCoreApplication::translate("ImageViewerClass", "Perona_Malik", nullptr));
         menuFile->setTitle(QCoreApplication::translate("ImageViewerClass", "File", nullptr));
         menuImage->setTitle(QCoreApplication::translate("ImageViewerClass", "Image", nullptr));
     } // retranslateUi

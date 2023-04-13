@@ -279,4 +279,32 @@ void ImageViewer::on_pushButtonImplicit_clicked()
 
 }
 
+void ImageViewer::on_pushButtonPM_clicked()
+{
+	double sigma = ui->doubleSpinBoxSigmaPM->value();
+	double tau = ui->doubleSpinBoxTauPM->value();
+	double K = ui->doubleSpinBoxKPM->value();
+	double steps = ui->spinBoxStepsPM->value();
+	double omega = ui->doubleSpinBoxOmegaPM->value();
+
+
+	if (opened)
+	{
+		IPClass ipmodul;
+		ipmodul.computePM(K, omega, sigma, tau, steps, vW->getImage()->width(), vW->getImage()->height(), vW->getImage()->bytesPerLine(), vW->getData());
+
+		vW->update();
+
+		printf("Perona-Malik successful\n");
+
+	}
+	else
+	{
+		msgBox.setText("Please open image.");
+		msgBox.setIcon(QMessageBox::Warning);
+		msgBox.exec();
+	}
+
+}
+
 
