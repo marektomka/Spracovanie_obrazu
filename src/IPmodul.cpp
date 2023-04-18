@@ -154,7 +154,7 @@ bool IPClass::unmirroring(int N, int w, int h, int bpl, uchar* imgData)
 	{
 		for (int j = 0; j < w; j++)
 		{
-			int index = j + (i * w);
+			int index = j + (i * bpl);
 			int tempIndex = ZeroPix + j + (i * tempWidth);
 			imgData[index] = static_cast<uchar>(tempData[tempIndex] + 0.5);
 		}
@@ -541,7 +541,7 @@ void IPClass::computeGradientsPM(double omega, double tau, int steps, int w, int
 	int maxIter = 100;
 
 	double* b = new double[tempWidth * tempHeight] {0.0};  // right side
-	double* phi = GradtempData;  // mirrored image with edges (before unmirror) 
+	double* phi = GradtempData;  // temp mirrored image with edges 
 
 	double aii = 1.0 + 4 * tau;
 	double aij = -tau;
@@ -667,11 +667,10 @@ void IPClass::computeGradientsPM(double omega, double tau, int steps, int w, int
 			}
 		}
 
-
-
 	}
 
 	delete[] b;
+	delete[] GradtempData;
 
 }
 
@@ -734,8 +733,9 @@ void IPClass::computePM(double K, double omega, double sigma, double tau, int st
 	int maxIter = 100;
 	double toler = 0.000001;
 	double rez = 0.0;
-	double tempRez = 0.0;
+	double tempRez = 0.0; 
 	double meanFilter = 0.0;
+	double tempSigma = 0.0;
 
 	int central = 0; int north = 0; int south = 0; int east = 0; int west = 0;  // indexes
 	double gradN = 0.0; double gradS = 0.0; double gradW = 0.0; double gradE = 0.0;
@@ -800,8 +800,8 @@ void IPClass::computePM(double K, double omega, double sigma, double tau, int st
 					aijW = -tau * gradW;
 					aijE = -tau * gradE;
 
-					sigma = aijN * phi[north] + aijS * phi[south] + aijE * phi[east] + aijW * phi[west];
-					phi[central] = (1.0 - omega) * phi[central] + omega * (b[central] - sigma) / aii;
+					tempSigma = aijN * phi[north] + aijS * phi[south] + aijE * phi[east] + aijW * phi[west];
+					phi[central] = (1.0 - omega) * phi[central] + omega * (b[central] - tempSigma) / aii;
 
 				}
 			}
