@@ -307,4 +307,34 @@ void ImageViewer::on_pushButtonPM_clicked()
 
 }
 
+void ImageViewer::on_pushButtonGMCF_clicked()
+{
+	double sigma = ui->doubleSpinBoxSigmaPM->value();
+	double tau = ui->doubleSpinBoxTauPM->value();
+	double K = ui->doubleSpinBoxKPM->value();
+	double steps = ui->spinBoxStepsPM->value();
+	double omega = ui->doubleSpinBoxOmegaPM->value();
+	double epsilon = ui->doubleSpinBoxEpsilon->value();
+
+
+	if (opened)
+	{
+		IPClass ipmodul;
+		ipmodul.computeGMCF(K, omega, sigma, tau, steps, epsilon, vW->getImage()->width(), vW->getImage()->height(), vW->getImage()->bytesPerLine(), vW->getData());
+
+		vW->update();
+
+		printf("(G)MCF successful\n");
+
+	}
+	else
+	{
+		msgBox.setText("Please open image.");
+		msgBox.setIcon(QMessageBox::Warning);
+		msgBox.exec();
+	}
+
+
+}
+
 

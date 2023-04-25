@@ -29,9 +29,12 @@ private:
 		double edgeS = 0.0;
 		double edgeW = 0.0;
 		double edgeE = 0.0;
+		double uj = 0.0;
 	}; 
 
 	std::vector<Gradient> pixelsGradient = {};
+	std::vector<Gradient> OrigpixelsGradient = {};
+
 
 public:
 
@@ -54,6 +57,8 @@ public:
 	void mirrorEdges(int N, double* DataTmp);
 	void computePM(double K, double omega, double sigma, double tau, int steps, int w, int h, int bpl, uchar* imgData);
 	void copyData();
+	void computeGradientsGMCF(double eps);
+	void computeGMCF(double K, double omega, double sigma, double tau, int steps, double eps,int w, int h, int bpl, uchar* imgData);
 
 	// Get functions //
 	double* getDataM() { return tempData; };

@@ -45,5 +45,6 @@ private slots:
 	void on_pushButtonExplicit_clicked();
 	void on_pushButtonImplicit_clicked();
 	void on_pushButtonPM_clicked();
+	void on_pushButtonGMCF_clicked();
 
 };

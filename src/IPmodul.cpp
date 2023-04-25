@@ -149,6 +149,11 @@ bool IPClass::unmirroring(int N, int w, int h, int bpl, uchar* imgData)
 	if (tempData == nullptr)
 		return false;
 
+	for (size_t i = 0; i < tempWidth * tempHeight; i++)
+	{
+		tempData[i] = tempData[i] * 255.0;
+	}
+
 	// Unmirror //
 	for (int i = 0; i < h; i++)
 	{
@@ -492,7 +497,7 @@ double IPClass::computeImplicit(double omega, double tau, int steps, int w, int 
 				break;
 			}
 
-			printf("Time step: %d .. Iteration: %d .. Rez: %.10lf\n", t, iter, sqrt(rez));
+			//printf("Time step: %d .. Iteration: %d .. Rez: %.10lf\n", t, iter, sqrt(rez));
 
 		} while (iter < maxIter);
 
@@ -670,7 +675,6 @@ void IPClass::computeGradientsPM(double omega, double tau, int steps, int w, int
 	}
 
 	delete[] b;
-	delete[] GradtempData;
 
 }
 
@@ -846,7 +850,7 @@ void IPClass::computePM(double K, double omega, double sigma, double tau, int st
 				break;
 			}
 
-			printf("Time step: %d .. Iteration: %d .. Rez: %.10lf\n", t, iter, sqrt(rez));
+			//printf("Time step: %d .. Iteration: %d .. Rez: %.10lf\n", t, iter, sqrt(rez));
 
 		} while (iter < maxIter);
 
@@ -875,7 +879,6 @@ void IPClass::computePM(double K, double omega, double sigma, double tau, int st
 
 	delete[] b;
 
-
 }
 
 void IPClass::copyData()
@@ -890,6 +893,243 @@ void IPClass::copyData()
 			GradtempData[i * tempWidth + j] = tempData[i * tempWidth + j];
 		}
 	}
+}
+
+void IPClass::computeGradientsGMCF(double eps)
+{
+	int N = 1;
+	int central = 0; int north = 0; int south = 0; int east = 0; int west = 0;
+	int northW = 0; int southW = 0; int northE = 0; int southE = 0;
+	double x = 0.0; double y = 0.0;
+	double u = 0.0;
+
+	// -------- Compute Gradients -------- //
+
+	for (size_t i = N; i < tempHeight - N; i++)
+	{
+		for (size_t j = N; j < tempWidth - N; j++)
+		{
+			central = j + i * tempWidth;
+			north = j + (i - 1) * tempWidth;
+			northW = j + (i - 1) * tempWidth - 1;
+			northE = j + (i - 1) * tempWidth + 1;
+			south = j + (i + 1) * tempWidth;
+			southW = j + (i + 1) * tempWidth - 1;
+			southE = j + (i + 1) * tempWidth + 1;
+			east = j + i * tempWidth + 1;
+			west = j + i * tempWidth - 1;
+
+			// East // 
+			x = tempData[east] - tempData[central];
+			y = (tempData[north] + tempData[northE] - tempData[south] - tempData[southE]) / 4.0;
+			OrigpixelsGradient[central].edgeE = sqrt(eps * eps + x * x + y * y);
+
+			// West // 
+			x = tempData[west] - tempData[central];
+			y = (tempData[south] + tempData[southW] - tempData[north] - tempData[northW]) / 4.0;
+			OrigpixelsGradient[central].edgeW = sqrt(eps * eps + x * x + y * y);
+
+			// North // 
+			x = (tempData[west] + tempData[northW] - tempData[east] - tempData[northE]) / 4.0;
+			y = tempData[north] - tempData[central];
+			OrigpixelsGradient[central].edgeN = sqrt(eps * eps + x * x + y * y);
+
+			// South // 
+			x = (tempData[east] + tempData[southE] - tempData[west] - tempData[southW]) / 4.0;
+			y = tempData[south] - tempData[central];
+			OrigpixelsGradient[central].edgeS = sqrt(eps * eps + x * x + y * y);
+
+			OrigpixelsGradient[central].uj = (OrigpixelsGradient[central].edgeE + OrigpixelsGradient[central].edgeW + OrigpixelsGradient[central].edgeN + OrigpixelsGradient[central].edgeS) / 4;
+
+		}
+	}
+
+}
+
+void IPClass::computeGMCF(double K, double omega, double sigma, double tau, int steps, double eps, int w, int h, int bpl, uchar* imgData)
+{
+	int N = 1;
+	mirroring(N, w, h, bpl, imgData);
+
+	tempWidth = w + (2 * N);
+	tempHeight = h + (2 * N);
+	double* b = new double[tempWidth * tempHeight] {0.0};  // right side
+
+	for (size_t i = 0; i < tempWidth * tempHeight; i++)
+	{
+		tempData[i] = tempData[i] / 255.0;
+	}
+
+	double* phi = tempData;  // mirrored image with edges (before unmirror) 
+	pixelsGradient.resize(tempWidth * tempHeight);
+	OrigpixelsGradient.resize(tempWidth * tempHeight);
+
+	double sum = 0.0;   // sum to - mean value of original image
+	double meanOrig = 0.0;  // mean value of original image
+	int iter = 0;
+	int maxIter = 400;
+	double toler = 0.000001;
+	double rez = 0.0;
+	double tempRez = 0.0;
+	double meanFilter = 0.0;
+	double tempSigma = 0.0;
+
+	int central = 0; int north = 0; int south = 0; int east = 0; int west = 0;  // indexes
+	double gradN = 0.0; double gradS = 0.0; double gradW = 0.0; double gradE = 0.0;
+	double uN = 0.0; double uS = 0.0; double uW = 0.0; double uE = 0.0;
+	double aii = 0.0; double aijN = 0.0; double aijS = 0.0; double aijE = 0.0; double aijW = 0.0;
+	double uj = 0.0;
+
+
+
+	// compute mean value of original image // 
+	for (size_t i = 0; i < h; i++)
+	{
+		for (size_t j = 0; j < w; j++)
+		{
+			sum += static_cast<double>(imgData[i * bpl + j]);
+		}
+	}
+	meanOrig = sum / (w * h);
+	printf("Mean value of original image: %.10lf\n", meanOrig);
+
+
+	// Right side // 
+	for (size_t i = 0; i < tempHeight; i++)
+	{
+		for (size_t j = 0; j < tempWidth; j++)
+		{
+			b[i * tempWidth + j] = static_cast<double>(tempData[i * tempWidth + j]);
+		}
+	}
+
+	//  (G)MCF ALGORITHM  //
+	for (size_t t = 0; t < steps; t++)
+	{
+		// Compute gradients // 
+		   
+		computeGradientsPM(omega, sigma, 1, w, h, bpl);    // sigma instead tau, only 1 step
+		computeGradientsGMCF(eps);
+
+		iter = 0;
+		rez = 0.0;
+		do
+		{
+			iter++;
+
+			for (size_t i = N; i < tempHeight - N; i++)
+			{
+				for (size_t j = N; j < tempWidth - N; j++)
+				{
+					central = 0; north = 0; south = 0; east = 0; west = 0;
+
+					central = j + i * tempWidth;
+					north = j + (i - 1) * tempWidth;
+					south = j + (i + 1) * tempWidth;
+					east = j + i * tempWidth + 1;
+					west = j + i * tempWidth - 1;
+
+					gradN = 1.0 / (1.0 + K * pixelsGradient[central].edgeN);
+					gradS = 1.0 / (1.0 + K * pixelsGradient[central].edgeS);
+					gradW = 1.0 / (1.0 + K * pixelsGradient[central].edgeW);
+					gradE = 1.0 / (1.0 + K * pixelsGradient[central].edgeE);
+
+					uN = OrigpixelsGradient[central].edgeN;
+					uS = OrigpixelsGradient[central].edgeS;
+					uW= OrigpixelsGradient[central].edgeW;
+					uE = OrigpixelsGradient[central].edgeE;
+					uj = OrigpixelsGradient[central].uj;
+
+					aii = 1 + tau * uj * (gradN / uN + gradS / uS + gradW / uW + gradE / uE);
+					aijN = -tau * uj *  gradN;
+					aijS = -tau * uj * gradS;
+					aijW = -tau * uj * gradW;
+					aijE = -tau * uj * gradE;
+
+					tempSigma = aijN * (phi[north]/uN) + aijS * (phi[south]/uS) + aijE * (phi[east]/uE) + aijW * (phi[west]/uW);
+					phi[central] = (1.0 - omega) * phi[central] + omega * (b[central] - tempSigma) / aii;
+
+				}
+			}
+
+			// update edges // 
+			mirrorEdges(N, tempData);
+
+			// compute residuals // 
+			// Ax - b // 
+			tempRez = 0.0;
+			rez = 0.0;
+			for (size_t i = N; i < tempHeight - N; i++)
+			{
+				for (size_t j = N; j < tempWidth - N; j++)
+				{
+					central = 0; north = 0; south = 0; east = 0; west = 0;
+
+					central = j + i * tempWidth;
+					north = j + (i - 1) * tempWidth;
+					south = j + (i + 1) * tempWidth;
+					east = j + i * tempWidth + 1;
+					west = j + i * tempWidth - 1;
+
+					gradN = 1.0 / (1.0 + K * pixelsGradient[central].edgeN);
+					gradS = 1.0 / (1.0 + K * pixelsGradient[central].edgeS);
+					gradW = 1.0 / (1.0 + K * pixelsGradient[central].edgeW);
+					gradE = 1.0 / (1.0 + K * pixelsGradient[central].edgeE);
+
+					uN = OrigpixelsGradient[central].edgeN;
+					uS = OrigpixelsGradient[central].edgeS;
+					uW = OrigpixelsGradient[central].edgeW;
+					uE = OrigpixelsGradient[central].edgeE;
+					uj = OrigpixelsGradient[central].uj;
+
+					aii = 1 + tau * uj * (gradN / uN + gradS / uS + gradW / uW + gradE / uE);
+					aijN = -tau * uj * gradN;
+					aijS = -tau * uj * gradS;
+					aijW = -tau * uj * gradW;
+					aijE = -tau * uj * gradE;
+
+					tempRez = (aii * phi[central] + aijN * (phi[north] / uN) + aijS * (phi[south] / uS) + aijE * (phi[east] / uE) + aijW * (phi[west] / uW)) - b[central];
+					rez += tempRez * tempRez;
+
+				}
+			}
+
+			if (sqrt(rez) < toler)
+			{
+				break;
+			}
+
+			printf("Time step: %d .. Iteration: %d .. Rez: %.10lf\n", t, iter, sqrt(rez));
+
+		} while (iter < maxIter);
+
+
+		// Compute mean value of new image // 
+		sum = 0.0;
+		meanFilter = 0.0;
+		for (size_t i = N; i < tempHeight - N; i++)
+		{
+			for (size_t j = N; j < tempWidth - N; j++)
+			{
+				int index = j + i * tempWidth;
+
+				sum += phi[index];
+
+				b[index] = phi[index];   // update right side 
+			}
+		}
+		meanFilter = sum / (w * h);
+		printf("End in step: %d ..... Iteration: %d .....  Mean value: %.10lf\n", t, iter, meanFilter);
+
+
+	}
+
+
+
+	unmirroring(N, w, h, bpl, imgData);
+
+	delete[] b;
+
 }
 
 IPClass::~IPClass()
